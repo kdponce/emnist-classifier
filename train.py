@@ -2,6 +2,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Flatten, AveragePooling2D
 from keras.utils import to_categorical
 from keras.optimizers import SGD
+from keras.preprocessing.image import ImageDataGenerator
 from emnist_decoder import read_idx
 import tensorflow as tf
 import numpy as np
@@ -49,8 +50,20 @@ model.add(Dense(26, activation='softmax'))
 model.compile(optimizer=SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 model.summary()
 
+# Create Image Generator for Data Augmentation
+train_datagen = ImageDataGenerator(rotation_range=20, width_shift_range=0.2, height_shift_range=0.2,
+                                   zoom_range=0.2, validation_split=0.2)
+val_datagen = ImageDataGenerator(validation_split=0.2)
+
 # Train & evaluate model on EMNIST Letters Dataset
-model.fit(train_images, train_labels, batch_size=32, epochs=3, validation_split=0.2)
+train_generator = train_datagen.flow(train_images, train_labels, batch_size=32, subset='training')
+val_generator = val_datagen.flow(train_images, train_labels, batch_size=32, subset='validation')
+
+model.fit_generator(train_generator,
+                    steps_per_epoch=len(train_images) / 32, epochs=20,
+                    validation_data=val_generator,
+                    validation_steps=len(train_images) / 32)
+
 results = model.evaluate(test_images, test_labels)
 
 # Save model & print evaluation results
