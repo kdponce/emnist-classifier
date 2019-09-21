@@ -4,6 +4,7 @@ from keras.utils import to_categorical
 from keras.optimizers import SGD
 from emnist_decoder import read_idx
 import tensorflow as tf
+import numpy as np
 
 # Only allocates a subset of the available GPU Memory and take more as needed.
 # Prevents "Failed to get convolution algorithm" error on Elementary OS Juno.
@@ -13,13 +14,22 @@ sess = tf.Session(config=config)
 
 # Load EMNIST Alphabet data
 train_images = read_idx('dataset/emnist-letters-train-images-idx3-ubyte.gz')
+test_images = read_idx('dataset/emnist-letters-test-images-idx3-ubyte.gz')
+
+# Rotate images to proper orientation
+for x in range(len(train_images)):
+    train_images[x] = np.rot90(np.fliplr(train_images[x]))
+for x in range(len(test_images)):
+    test_images[x] = np.rot90(np.fliplr(test_images[x]))
+
+# Reshape images to fit model requirements
 train_images = train_images.reshape((train_images.shape[0], train_images.shape[1], train_images.shape[2], 1))
+test_images = test_images.reshape((test_images.shape[0], test_images.shape[1], test_images.shape[2], 1))
+
+# Shift labels 0 - A, 25 - Z
 train_labels = read_idx('dataset/emnist-letters-train-labels-idx1-ubyte.gz')
 train_labels[:] = [x - 1 for x in train_labels]
 train_labels = to_categorical(train_labels)
-
-test_images = read_idx('dataset/emnist-letters-test-images-idx3-ubyte.gz')
-test_images = test_images.reshape((test_images.shape[0], test_images.shape[1], test_images.shape[2], 1))
 test_labels = read_idx('dataset/emnist-letters-test-labels-idx1-ubyte.gz')
 test_labels[:] = [x - 1 for x in test_labels]
 test_labels = to_categorical(test_labels)
