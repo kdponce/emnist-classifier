@@ -42,7 +42,7 @@ model.compile(optimizer=SGD(lr=0.001), loss='categorical_crossentropy', metrics=
 model.summary()
 
 # Create Image Generator for Data Augmentation
-train_datagen = ImageDataGenerator(rotation_range=20, width_shift_range=0.2, height_shift_range=0.2,
+train_datagen = ImageDataGenerator(rotation_range=10, width_shift_range=0.2, height_shift_range=0.2,
                                    zoom_range=0.2, validation_split=0.2)
 val_datagen = ImageDataGenerator(validation_split=0.2)
 
