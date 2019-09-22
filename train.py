@@ -1,9 +1,8 @@
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten, AveragePooling2D
 from keras.utils import to_categorical
 from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 from emnist_decoder import read_idx
+from model import create_model
 import tensorflow as tf
 import numpy as np
 
@@ -35,16 +34,8 @@ test_labels = read_idx('dataset/emnist-letters-test-labels-idx1-ubyte.gz')
 test_labels[:] = [x - 1 for x in test_labels]
 test_labels = to_categorical(test_labels)
 
-# Create model derived from LeNet-5
-model = Sequential()
-model.add(Conv2D(6, kernel_size=5, strides=1, activation='relu', input_shape=(28, 28, 1)))
-model.add(AveragePooling2D(pool_size=2, strides=2))
-model.add(Conv2D(16, kernel_size=5, strides=1, activation='relu'))
-model.add(AveragePooling2D(pool_size=2, strides=2))
-model.add(Flatten())
-model.add(Dense(120, activation='relu'))
-model.add(Dense(84, activation='relu'))
-model.add(Dense(26, activation='softmax'))
+# Create neural network
+model = create_model()
 
 # Compile and display model layers
 model.compile(optimizer=SGD(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
