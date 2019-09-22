@@ -42,18 +42,20 @@ model.compile(optimizer=SGD(lr=0.001), loss='categorical_crossentropy', metrics=
 model.summary()
 
 # Create Image Generator for Data Augmentation
-train_datagen = ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2,
-                                   zoom_range=0.2, validation_split=0.2)
-val_datagen = ImageDataGenerator(validation_split=0.2)
+# train_datagen = ImageDataGenerator(width_shift_range=0.2, height_shift_range=0.2,
+#                                    zoom_range=0.2, validation_split=0.2)
+# val_datagen = ImageDataGenerator(validation_split=0.2)
 
 # Train & evaluate model on EMNIST Letters Dataset
-train_generator = train_datagen.flow(train_images, train_labels, batch_size=32, subset='training')
-val_generator = val_datagen.flow(train_images, train_labels, batch_size=32, subset='validation')
+# train_generator = train_datagen.flow(train_images, train_labels, batch_size=32, subset='training')
+# val_generator = val_datagen.flow(train_images, train_labels, batch_size=32, subset='validation')
 
-model.fit_generator(train_generator,
-                    steps_per_epoch=len(train_images) / 32, epochs=20,
-                    validation_data=val_generator,
-                    validation_steps=len(train_images) / 32)
+model.fit(train_images, train_labels, batch_size=32, epochs=10, validation_split=0.2)
+
+# model.fit_generator(train_generator,
+#                     steps_per_epoch=len(train_images) / 32, epochs=20,
+#                     validation_data=val_generator,
+#                     validation_steps=len(train_images) / 32)
 
 results = model.evaluate(test_images, test_labels)
 

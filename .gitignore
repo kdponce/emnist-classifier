@@ -72,3 +72,5 @@ fabric.properties
 *.h5
 __pycache__/
 test.jpg
+
+*.jpg
